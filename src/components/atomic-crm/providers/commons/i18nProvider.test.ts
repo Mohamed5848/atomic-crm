@@ -6,11 +6,60 @@ afterEach(() => {
 });
 
 describe("i18nProvider", () => {
-  it("registers en and fr locales", () => {
+  it("registers en, ar and fr locales", () => {
     expect(i18nProvider.getLocales?.()).toEqual([
       { locale: "en", name: "English" },
+      { locale: "ar", name: "العربية" },
       { locale: "fr", name: "Français" },
     ]);
+  });
+
+  it("translates crm keys in arabic", async () => {
+    await i18nProvider.changeLocale("ar");
+
+    expect(i18nProvider.translate("crm.language")).toBe("اللغة");
+    expect(i18nProvider.translate("ra.action.save")).toBe("حفظ");
+  });
+
+  it("uses arabic plural forms for counts", async () => {
+    await i18nProvider.changeLocale("ar");
+
+    expect(
+      i18nProvider.translate("crm.common.task_count", { smart_count: 2 }),
+    ).toBe("مهمتان");
+    expect(
+      i18nProvider.translate("crm.common.task_count", { smart_count: 5 }),
+    ).toBe("5 مهام");
+    expect(
+      i18nProvider.translate("crm.common.task_count", { smart_count: 20 }),
+    ).toBe("20 مهمة");
+  });
+
+  it("uses the plural resource name for list titles in arabic", async () => {
+    await i18nProvider.changeLocale("ar");
+
+    expect(
+      i18nProvider.translate("resources.contacts.name", { smart_count: 2 }),
+    ).toBe("جهات الاتصال");
+  });
+
+  it("switches the document to right-to-left for arabic and back", async () => {
+    await i18nProvider.changeLocale("ar");
+    expect(document.documentElement.dir).toBe("rtl");
+    expect(document.documentElement.lang).toBe("ar");
+
+    await i18nProvider.changeLocale("en");
+    expect(document.documentElement.dir).toBe("ltr");
+    expect(document.documentElement.lang).toBe("en");
+  });
+
+  it("uses browser arabic locale when available", () => {
+    vi.stubGlobal("navigator", {
+      language: "ar-EG",
+      languages: ["ar-EG", "en-US"],
+    });
+
+    expect(getInitialLocale()).toBe("ar");
   });
 
   it("translates the language key in french", async () => {

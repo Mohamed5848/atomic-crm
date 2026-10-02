@@ -1,0 +1,253 @@
+import type { TranslationMessages } from "ra-core";
+
+// Arabic translation of the ra-core and ra-supabase UI messages.
+// No published ra-language-arabic package is vetted for this repo, so the
+// catalog lives here. Missing keys fall back to English (see i18nProvider).
+// Pluralized strings carry the six Arabic plural forms polyglot expects for
+// "ar": 0 |||| 1 |||| 2 |||| 3-10 |||| 11-99 |||| 100+.
+export const arabicRaMessages: TranslationMessages = {
+  ra: {
+    action: {
+      add_filter: "إضافة فلتر",
+      add: "إضافة",
+      back: "رجوع",
+      bulk_actions:
+        "لم يتم تحديد أي عنصر |||| تم تحديد عنصر واحد |||| تم تحديد عنصرين |||| تم تحديد %{smart_count} عناصر |||| تم تحديد %{smart_count} عنصرًا |||| تم تحديد %{smart_count} عنصر",
+      cancel: "إلغاء",
+      clear_array_input: "مسح القائمة",
+      clear_input_value: "مسح القيمة",
+      clone: "نسخ",
+      confirm: "تأكيد",
+      create: "إنشاء",
+      create_item: "إنشاء %{item}",
+      delete: "حذف",
+      edit: "تعديل",
+      export: "تصدير",
+      list: "القائمة",
+      refresh: "تحديث",
+      remove_filter: "إزالة هذا الفلتر",
+      remove_all_filters: "إزالة كل الفلاتر",
+      remove: "إزالة",
+      reset: "إعادة تعيين",
+      save: "حفظ",
+      search: "بحث",
+      search_columns: "البحث في الأعمدة",
+      select_all: "تحديد الكل",
+      select_all_button: "تحديد الكل",
+      select_row: "تحديد هذا الصف",
+      show: "عرض",
+      sort: "ترتيب",
+      undo: "تراجع",
+      unselect: "إلغاء التحديد",
+      expand: "توسيع",
+      close: "إغلاق",
+      open_menu: "فتح القائمة",
+      close_menu: "إغلاق القائمة",
+      update: "تحديث",
+      move_up: "تحريك لأعلى",
+      move_down: "تحريك لأسفل",
+      open: "فتح",
+      toggle_theme: "تبديل الوضع الفاتح/الداكن",
+      select_columns: "الأعمدة",
+      update_application: "إعادة تحميل التطبيق",
+    },
+    boolean: {
+      true: "نعم",
+      false: "لا",
+      null: " ",
+    },
+    page: {
+      create: "إنشاء %{name}",
+      dashboard: "لوحة التحكم",
+      edit: "%{name} %{recordRepresentation}",
+      error: "حدث خطأ ما",
+      list: "%{name}",
+      loading: "جارٍ التحميل",
+      not_found: "غير موجود",
+      show: "%{name} %{recordRepresentation}",
+      empty: "لا يوجد %{name} حتى الآن.",
+      invite: "هل تريد إضافة واحد؟",
+      access_denied: "تم رفض الوصول",
+      authentication_error: "خطأ في المصادقة",
+    },
+    input: {
+      file: {
+        upload_several: "اسحب الملفات هنا للرفع، أو اضغط لاختيار ملف.",
+        upload_single: "اسحب ملفًا هنا للرفع، أو اضغط لاختياره.",
+      },
+      image: {
+        upload_several: "اسحب الصور هنا للرفع، أو اضغط لاختيار صورة.",
+        upload_single: "اسحب صورة هنا للرفع، أو اضغط لاختيارها.",
+      },
+      references: {
+        all_missing: "تعذر العثور على البيانات المرتبطة.",
+        many_missing: "عنصر واحد على الأقل من العناصر المرتبطة لم يعد متاحًا.",
+        single_missing: "العنصر المرتبط لم يعد متاحًا.",
+      },
+      password: {
+        toggle_visible: "إخفاء كلمة المرور",
+        toggle_hidden: "إظهار كلمة المرور",
+      },
+    },
+    message: {
+      about: "حول",
+      access_denied: "ليست لديك صلاحية للوصول إلى هذه الصفحة",
+      are_you_sure: "هل أنت متأكد؟",
+      authentication_error:
+        "أعاد خادم المصادقة خطأ ولم يتم التحقق من بيانات الدخول.",
+      auth_error: "حدث خطأ أثناء التحقق من رمز المصادقة.",
+      bulk_delete_content:
+        "هل أنت متأكد من حذف هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من حذف %{name}؟ |||| هل أنت متأكد من حذف هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من حذف هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من حذف هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من حذف هذه العناصر (%{smart_count})؟",
+      bulk_delete_title:
+        "حذف %{smart_count} %{name} |||| حذف %{name} |||| حذف %{smart_count} %{name} |||| حذف %{smart_count} %{name} |||| حذف %{smart_count} %{name} |||| حذف %{smart_count} %{name}",
+      bulk_update_content:
+        "هل أنت متأكد من تحديث هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من تحديث %{name} %{recordRepresentation}؟ |||| هل أنت متأكد من تحديث هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من تحديث هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من تحديث هذه العناصر (%{smart_count})؟ |||| هل أنت متأكد من تحديث هذه العناصر (%{smart_count})؟",
+      bulk_update_title:
+        "تحديث %{smart_count} %{name} |||| تحديث %{name} %{recordRepresentation} |||| تحديث %{smart_count} %{name} |||| تحديث %{smart_count} %{name} |||| تحديث %{smart_count} %{name} |||| تحديث %{smart_count} %{name}",
+      clear_array_input: "هل أنت متأكد من مسح القائمة بالكامل؟",
+      delete_content: "هل أنت متأكد من حذف %{name}؟",
+      delete_title: "حذف %{name} %{recordRepresentation}",
+      details: "التفاصيل",
+      error: "حدث خطأ ولم يتم تنفيذ طلبك.",
+      invalid_form: "النموذج غير صالح. يرجى مراجعة الأخطاء",
+      loading: "يرجى الانتظار",
+      no: "لا",
+      not_found: "الرابط غير صحيح أو أنك اتبعت رابطًا خاطئًا.",
+      select_all_limit_reached:
+        "العناصر كثيرة جدًا لتحديدها كلها. تم تحديد أول %{max} عنصر فقط.",
+      unsaved_changes: "بعض التغييرات لم تُحفظ. هل تريد تجاهلها؟",
+      yes: "نعم",
+      placeholder_data_warning: "مشكلة في الشبكة: فشل تحديث البيانات.",
+    },
+    navigation: {
+      clear_filters: "مسح الفلاتر",
+      no_filtered_results: "لا يوجد %{name} يطابق الفلاتر الحالية.",
+      no_results: "لا يوجد %{name}",
+      no_more_results: "رقم الصفحة %{page} خارج النطاق. جرّب الصفحة السابقة.",
+      page_out_of_boundaries: "رقم الصفحة %{page} خارج النطاق",
+      page_out_from_end: "لا يمكن الانتقال بعد الصفحة الأخيرة",
+      page_out_from_begin: "لا يمكن الانتقال قبل الصفحة 1",
+      page_range_info: "%{offsetBegin}-%{offsetEnd} من %{total}",
+      partial_page_range_info:
+        "%{offsetBegin}-%{offsetEnd} من أكثر من %{offsetEnd}",
+      current_page: "صفحة %{page}",
+      page: "الانتقال إلى صفحة %{page}",
+      first: "الانتقال إلى الصفحة الأولى",
+      last: "الانتقال إلى الصفحة الأخيرة",
+      next: "الصفحة التالية",
+      previous: "الصفحة السابقة",
+      page_rows_per_page: "عدد الصفوف في الصفحة:",
+      skip_nav: "انتقل إلى المحتوى",
+    },
+    sort: {
+      sort_by: "ترتيب حسب %{field_lower_first} %{order}",
+      ASC: "تصاعديًا",
+      DESC: "تنازليًا",
+    },
+    auth: {
+      auth_check_error: "يرجى تسجيل الدخول للمتابعة",
+      user_menu: "الملف الشخصي",
+      username: "اسم المستخدم",
+      password: "كلمة المرور",
+      email: "البريد الإلكتروني",
+      sign_in: "تسجيل الدخول",
+      sign_in_error: "فشلت المصادقة، يرجى المحاولة مرة أخرى",
+      logout: "تسجيل الخروج",
+    },
+    notification: {
+      updated:
+        "لم يتم تحديث أي عنصر |||| تم تحديث العنصر |||| تم تحديث عنصرين |||| تم تحديث %{smart_count} عناصر |||| تم تحديث %{smart_count} عنصرًا |||| تم تحديث %{smart_count} عنصر",
+      created: "تم إنشاء العنصر",
+      deleted:
+        "لم يتم حذف أي عنصر |||| تم حذف العنصر |||| تم حذف عنصرين |||| تم حذف %{smart_count} عناصر |||| تم حذف %{smart_count} عنصرًا |||| تم حذف %{smart_count} عنصر",
+      bad_item: "عنصر غير صحيح",
+      item_doesnt_exist: "العنصر غير موجود",
+      http_error: "خطأ في الاتصال بالخادم",
+      data_provider_error: "خطأ في مزود البيانات. راجع وحدة التحكم للتفاصيل.",
+      i18n_error: "تعذر تحميل الترجمات للغة المحددة",
+      canceled: "تم إلغاء الإجراء",
+      logged_out: "انتهت جلستك، يرجى تسجيل الدخول مرة أخرى.",
+      not_authorized: "غير مصرح لك بالوصول إلى هذا المورد.",
+      application_update_available: "يتوفر إصدار جديد.",
+      offline: "لا يوجد اتصال. تعذر جلب البيانات.",
+    },
+    validation: {
+      required: "مطلوب",
+      minLength: "يجب ألا يقل عن %{min} حرف",
+      maxLength: "يجب ألا يزيد عن %{max} حرف",
+      minValue: "يجب ألا يقل عن %{min}",
+      maxValue: "يجب ألا يزيد عن %{max}",
+      number: "يجب أن يكون رقمًا",
+      email: "يجب أن يكون بريدًا إلكترونيًا صالحًا",
+      oneOf: "يجب أن يكون أحد الخيارات: %{options}",
+      regex: "يجب أن يطابق صيغة محددة: %{pattern}",
+      unique: "يجب أن يكون فريدًا",
+    },
+    saved_queries: {
+      label: "الاستعلامات المحفوظة",
+      query_name: "اسم الاستعلام",
+      new_label: "حفظ الاستعلام الحالي...",
+      new_dialog_title: "حفظ الاستعلام الحالي باسم",
+      remove_label: "إزالة الاستعلام المحفوظ",
+      remove_label_with_name: 'إزالة الاستعلام "%{name}"',
+      remove_dialog_title: "إزالة الاستعلام المحفوظ؟",
+      remove_message:
+        "هل أنت متأكد من إزالة هذا العنصر من الاستعلامات المحفوظة؟",
+      help: "قم بفلترة القائمة واحفظ هذا الاستعلام لاحقًا",
+    },
+    guesser: {
+      empty: {
+        title: "لا توجد بيانات للعرض",
+        message: "يرجى التحقق من مزود البيانات",
+      },
+    },
+    configurable: {
+      customize: "تخصيص",
+      configureMode: "تهيئة هذه الصفحة",
+      inspector: {
+        title: "المفتش",
+        content: "مرّر المؤشر فوق عناصر الواجهة لتهيئتها",
+        reset: "إعادة تعيين الإعدادات",
+        hideAll: "إخفاء الكل",
+        showAll: "إظهار الكل",
+      },
+      Datagrid: {
+        title: "جدول البيانات",
+        unlabeled: "عمود بدون عنوان #%{column}",
+      },
+      SimpleForm: {
+        title: "النموذج",
+        unlabeled: "حقل بدون عنوان #%{input}",
+      },
+      SimpleList: {
+        title: "القائمة",
+        primaryText: "النص الأساسي",
+        secondaryText: "النص الثانوي",
+        tertiaryText: "النص الثالث",
+      },
+    },
+  },
+  "ra-supabase": {
+    auth: {
+      email: "البريد الإلكتروني",
+      confirm_password: "تأكيد كلمة المرور",
+      sign_in_with: "تسجيل الدخول باستخدام %{provider}",
+      forgot_password: "نسيت كلمة المرور؟",
+      reset_password: "إعادة تعيين كلمة المرور",
+      password_reset:
+        "راجع بريدك الإلكتروني للعثور على رسالة إعادة تعيين كلمة المرور.",
+      missing_tokens: "رموز الوصول والتحديث مفقودة",
+      back_to_login: "العودة لتسجيل الدخول",
+    },
+    reset_password: {
+      forgot_password: "نسيت كلمة المرور؟",
+      forgot_password_details: "أدخل بريدك الإلكتروني لتلقي التعليمات.",
+    },
+    set_password: {
+      new_password: "اختر كلمة المرور",
+    },
+    validation: {
+      password_mismatch: "كلمتا المرور غير متطابقتين",
+    },
+  },
+};

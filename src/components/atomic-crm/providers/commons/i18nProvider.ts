@@ -4,6 +4,8 @@ import englishMessages from "ra-language-english";
 import frenchMessages from "ra-language-french";
 import { raSupabaseEnglishMessages } from "ra-supabase-language-english";
 import { raSupabaseFrenchMessages } from "ra-supabase-language-french";
+import { arabicCrmMessages } from "./arabicCrmMessages";
+import { arabicRaMessages } from "./arabicRaMessages";
 import { englishCrmMessages } from "./englishCrmMessages";
 import { frenchCrmMessages } from "./frenchCrmMessages";
 
@@ -39,7 +41,28 @@ const frenchCatalog = mergeTranslations(
   frenchCrmMessages,
 );
 
-export const getInitialLocale = (): "en" | "fr" => {
+const arabicCatalog = mergeTranslations(
+  englishCatalog,
+  arabicRaMessages,
+  arabicCrmMessages,
+);
+
+type SupportedLocale = "en" | "fr" | "ar";
+
+const RTL_LOCALES = new Set(["ar"]);
+
+export const getLocaleDirection = (locale: string): "rtl" | "ltr" =>
+  RTL_LOCALES.has(locale) ? "rtl" : "ltr";
+
+const applyDocumentLocale = (locale: string): void => {
+  if (typeof document === "undefined") {
+    return;
+  }
+  document.documentElement.lang = locale;
+  document.documentElement.dir = getLocaleDirection(locale);
+};
+
+export const getInitialLocale = (): SupportedLocale => {
   if (typeof navigator === "undefined") {
     return "en";
   }
@@ -48,24 +71,44 @@ export const getInitialLocale = (): "en" | "fr" => {
   if (browserLocale?.toLowerCase().startsWith("fr")) {
     return "fr";
   }
+  if (browserLocale?.toLowerCase().startsWith("ar")) {
+    return "ar";
+  }
 
   return "en";
 };
 
-export const i18nProvider = polyglotI18nProvider(
+const initialLocale = getInitialLocale();
+
+const polyglotProvider = polyglotI18nProvider(
   (locale) => {
     if (locale === "fr") {
       return frenchCatalog;
     }
+    if (locale === "ar") {
+      return arabicCatalog;
+    }
     return englishCatalog;
   },
-  getInitialLocale(),
+  initialLocale,
   [
     { locale: "en", name: "English" },
+    { locale: "ar", name: "العربية" },
     { locale: "fr", name: "Français" },
   ],
   { allowMissing: true },
 );
+
+applyDocumentLocale(initialLocale);
+
+// Keeps <html lang dir> in sync so Arabic renders right-to-left.
+export const i18nProvider = {
+  ...polyglotProvider,
+  changeLocale: async (locale: string) => {
+    await polyglotProvider.changeLocale(locale);
+    applyDocumentLocale(locale);
+  },
+};
 
 export const testI18nProvider = polyglotI18nProvider(
   () => englishCatalog,
