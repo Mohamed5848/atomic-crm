@@ -286,6 +286,10 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/providers/fakerest/dataGenerator/projects.ts",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/providers/fakerest/dataGenerator/index.ts",
           "type": "registry:component"
         },
@@ -355,6 +359,30 @@
         },
         {
           "path": "src/components/atomic-crm/providers/commons/activity.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/projects/index.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/projects/ProjectShow.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/projects/ProjectList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/projects/ProjectInputs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/projects/ProjectEdit.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/projects/ProjectCreate.tsx",
           "type": "registry:component"
         },
         {
@@ -439,6 +467,10 @@
         },
         {
           "path": "src/components/atomic-crm/misc/isLinkedInUrl.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/misc/formatMoney.ts",
           "type": "registry:component"
         },
         {
@@ -582,6 +614,14 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/deals/pipelines.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/deals/opportunity.ts",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/deals/index.ts",
           "type": "registry:component"
         },
@@ -590,11 +630,27 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/deals/PipelineToggle.tsx",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/deals/OnlyMineInput.tsx",
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/deals/MovePipelineButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/deals/LineItemsInput.tsx",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/deals/DealShow.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/deals/DealRevisions.tsx",
           "type": "registry:component"
         },
         {
@@ -603,6 +659,10 @@
         },
         {
           "path": "src/components/atomic-crm/deals/DealList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/deals/DealLineItemsTable.tsx",
           "type": "registry:component"
         },
         {
@@ -662,11 +722,19 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/dataImport/importMapping.ts",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/dataImport/fetchRecordsWithCache.ts",
           "type": "registry:component"
         },
         {
           "path": "src/components/atomic-crm/dataImport/createEachRow.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/dataImport/ImportPreview.tsx",
           "type": "registry:component"
         },
         {
@@ -686,11 +754,19 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/dashboard/pipelineReport.ts",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/dashboard/Welcome.tsx",
           "type": "registry:component"
         },
         {
           "path": "src/components/atomic-crm/dashboard/TasksList.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/dashboard/PipelineReport.tsx",
           "type": "registry:component"
         },
         {
@@ -707,10 +783,6 @@
         },
         {
           "path": "src/components/atomic-crm/dashboard/DealsPipeline.tsx",
-          "type": "registry:component"
-        },
-        {
-          "path": "src/components/atomic-crm/dashboard/DealsChart.tsx",
           "type": "registry:component"
         },
         {
