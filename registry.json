@@ -198,6 +198,10 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/atomic-crm/root/mobileResources.tsx",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/atomic-crm/root/defaultConfiguration.ts",
           "type": "registry:component"
         },
@@ -575,6 +579,10 @@
         },
         {
           "path": "src/components/atomic-crm/layout/MobileRefreshButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "src/components/atomic-crm/layout/MobilePage.tsx",
           "type": "registry:component"
         },
         {
