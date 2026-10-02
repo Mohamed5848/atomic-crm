@@ -1,7 +1,8 @@
 import { useGetList, useTimeout } from "ra-core";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import type { Contact, ContactNote } from "../types";
+import type { Contact, ContactNote, Deal } from "../types";
+import { PipelineReport } from "./PipelineReport";
 import { DashboardActivityLog } from "./DashboardActivityLog";
 import { DashboardStepper } from "./DashboardStepper";
 import { Welcome } from "./Welcome";
@@ -55,15 +56,20 @@ export const MobileDashboard = () => {
     useGetList<ContactNote>("contact_notes", {
       pagination: { page: 1, perPage: 1 },
     });
+  const { total: totalDeal, isPending: isPendingDeal } = useGetList<Deal>(
+    "deals",
+    { pagination: { page: 1, perPage: 1 } },
+  );
   const oneSecondHasPassed = useTimeout(1000);
 
-  const isPending = isPendingContact || isPendingContactNotes;
+  const isPending = isPendingContact || isPendingContactNotes || isPendingDeal;
 
   if (isPending) {
     return oneSecondHasPassed ? <Loading /> : null;
   }
 
-  if (!totalContact) {
+  // once opportunities exist, the pipeline report matters more than onboarding
+  if (!totalContact && !totalDeal) {
     return (
       <Wrapper>
         <DashboardStepper step={1} />
@@ -71,7 +77,7 @@ export const MobileDashboard = () => {
     );
   }
 
-  if (!totalContactNotes) {
+  if (!totalContactNotes && !totalDeal) {
     return (
       <Wrapper>
         <DashboardStepper step={2} contactId={dataContact?.[0]?.id} />
@@ -82,6 +88,7 @@ export const MobileDashboard = () => {
   return (
     <Wrapper>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mt-1">
+        {totalDeal ? <PipelineReport /> : null}
         {import.meta.env.VITE_IS_DEMO === "true" ? <Welcome /> : null}
         <DashboardActivityLog />
       </div>

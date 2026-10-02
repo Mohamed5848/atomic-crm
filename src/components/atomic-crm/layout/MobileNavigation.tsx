@@ -6,7 +6,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Home, ListTodo, Plus, Settings, Users } from "lucide-react";
+import {
+  FolderKanban,
+  Handshake,
+  Home,
+  ListTodo,
+  Plus,
+  Settings,
+  Users,
+} from "lucide-react";
 import { useTranslate } from "ra-core";
 import { Link, matchPath, useLocation, useMatch } from "react-router";
 import { ContactCreateSheet } from "../contacts/ContactCreateSheet";
@@ -29,6 +37,8 @@ export const MobileNavigation = () => {
     currentPath = "/tasks";
   } else if (matchPath("/deals/*", location.pathname)) {
     currentPath = "/deals";
+  } else if (matchPath("/projects/*", location.pathname)) {
+    currentPath = "/projects";
   } else {
     currentPath = false;
   }
@@ -68,7 +78,19 @@ export const MobileNavigation = () => {
             })}
             isActive={currentPath === "/contacts"}
           />
+          <NavigationButton
+            href="/projects"
+            Icon={FolderKanban}
+            label={translate("resources.projects.name", { smart_count: 2 })}
+            isActive={currentPath === "/projects"}
+          />
           <CreateButton />
+          <NavigationButton
+            href="/deals"
+            Icon={Handshake}
+            label={translate("resources.deals.name", { smart_count: 2 })}
+            isActive={currentPath === "/deals"}
+          />
           <NavigationButton
             href="/tasks"
             Icon={ListTodo}
@@ -97,13 +119,15 @@ const NavigationButton = ({
     asChild
     variant="ghost"
     className={cn(
-      "flex-col gap-1 h-auto py-2 px-1 rounded-md w-16",
+      "flex-col gap-1 h-auto py-2 px-0.5 rounded-md w-16 min-w-0 flex-1 max-w-16",
       isActive ? null : "text-muted-foreground",
     )}
   >
     <Link to={href}>
       <Icon className="size-6" />
-      <span className="text-[0.6rem] font-medium">{label}</span>
+      <span className="text-[0.6rem] leading-tight font-medium whitespace-normal text-center line-clamp-2 max-w-full">
+        {label}
+      </span>
     </Link>
   </Button>
 );
@@ -136,7 +160,7 @@ const CreateButton = () => {
           <Button
             variant="default"
             size="icon"
-            className="h-16 w-16 rounded-full -mt-3"
+            className="h-14 w-14 shrink-0 rounded-full -mt-3"
             aria-label={translate("ra.action.create")}
           >
             <Plus className="size-10" />

@@ -63,6 +63,11 @@ import { ContactListMobile } from "../contacts/ContactList.tsx";
 import { ContactShow } from "../contacts/ContactShow.tsx";
 import { CompanyShow } from "../companies/CompanyShow.tsx";
 import { NoteShowPage } from "../notes/NoteShowPage.tsx";
+import {
+  MobileDealList,
+  MobileProjectList,
+  MobileProjectShow,
+} from "./mobileResources";
 
 const defaultStore = localStorageStore(undefined, "CRM");
 
@@ -350,6 +355,18 @@ const MobileAdmin = (
         </Resource>
         <Resource name="companies" show={CompanyShow} />
         <Resource name="tasks" list={MobileTasksList} />
+        <Resource name="deals" list={MobileDealList} />
+        <Resource
+          name="projects"
+          list={MobileProjectList}
+          show={MobileProjectShow}
+          recordRepresentation={projects.recordRepresentation}
+        />
+        <Resource name="deal_notes" />
+        <Resource
+          name="sales"
+          recordRepresentation={sales.recordRepresentation}
+        />
       </Admin>
     </PersistQueryClientProvider>
   );
