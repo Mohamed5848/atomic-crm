@@ -1,6 +1,7 @@
 import { FileText, Import, Settings, User, Users } from "lucide-react";
 import { CanAccess, useTranslate, useUserMenu } from "ra-core";
 import { Link, matchPath, useLocation } from "react-router";
+import { LocalesMenuButton } from "@/components/admin/locales-menu-button";
 import { RefreshButton } from "@/components/admin/refresh-button";
 import { ThemeModeToggle } from "@/components/admin/theme-mode-toggle";
 import { UserMenu } from "@/components/admin/user-menu";
@@ -22,6 +23,8 @@ const Header = () => {
     currentPath = "/contacts";
   } else if (matchPath("/companies/*", location.pathname)) {
     currentPath = "/companies";
+  } else if (matchPath("/projects/*", location.pathname)) {
+    currentPath = "/projects";
   } else if (matchPath("/deals/*", location.pathname)) {
     currentPath = "/deals";
   } else {
@@ -72,6 +75,13 @@ const Header = () => {
                     isActive={currentPath === "/companies"}
                   />
                   <NavigationTab
+                    label={translate("resources.projects.name", {
+                      smart_count: 2,
+                    })}
+                    to="/projects"
+                    isActive={currentPath === "/projects"}
+                  />
+                  <NavigationTab
                     label={translate("resources.deals.name", {
                       smart_count: 2,
                     })}
@@ -81,6 +91,7 @@ const Header = () => {
                 </nav>
               </div>
               <div className="flex items-center">
+                <LocalesMenuButton />
                 <ThemeModeToggle />
                 <RefreshButton />
                 <UserMenu>

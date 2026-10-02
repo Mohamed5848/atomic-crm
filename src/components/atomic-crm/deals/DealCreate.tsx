@@ -18,7 +18,7 @@ import { DealInputs } from "./DealInputs";
 export const DealCreate = ({ open }: { open: boolean }) => {
   const redirect = useRedirect();
   const dataProvider = useDataProvider();
-  const { data: allDeals } = useListContext<Deal>();
+  const { data: allDeals, filterValues } = useListContext<Deal>();
 
   const handleClose = () => {
     redirect("/deals");
@@ -34,7 +34,10 @@ export const DealCreate = ({ open }: { open: boolean }) => {
     // increase the index of all deals in the same stage as the new deal
     // first, get the list of deals in the same stage
     const deals = allDeals.filter(
-      (d: Deal) => d.stage === deal.stage && d.id !== deal.id,
+      (d: Deal) =>
+        d.stage === deal.stage &&
+        d.pipeline === deal.pipeline &&
+        d.id !== deal.id,
     );
     // update the actual deals in the database
     await Promise.all(
@@ -81,6 +84,10 @@ export const DealCreate = ({ open }: { open: boolean }) => {
               sales_id: identity?.id,
               contact_ids: [],
               index: 0,
+              pipeline:
+                filterValues?.pipeline === "in_hand" ? "in_hand" : "tender",
+              line_items: [],
+              revisions: [],
             }}
           >
             <DealInputs />

@@ -71,6 +71,14 @@ const renderImport = async (
   return { dataProvider, screen };
 };
 
+/** Starts the import and confirms the dry run preview of companies / contacts. */
+const startAndConfirmImport = async (
+  screen: Awaited<ReturnType<typeof render>>,
+) => {
+  await screen.getByRole("button", { name: "Start import" }).click();
+  await screen.getByRole("button", { name: /^Import \d+ rows?$/ }).click();
+};
+
 /** A CSV file as the file input would hand it to the dialog. */
 const csvFile = (name: string, lines: string[]) =>
   new File([lines.join("\n")], name, { type: "text/csv" });
@@ -94,13 +102,13 @@ describe("DataImportButton", () => {
 
     await expect.element(options.getByText("Contacts")).toBeVisible();
     await expect.element(options.getByText("Companies")).toBeVisible();
-    await expect.element(options.getByText("Deals")).toBeVisible();
+    await expect.element(options.getByText("Opportunities")).toBeVisible();
   });
 
   it.each([
     ["contacts", "Import contacts"],
     ["companies", "Import companies"],
-    ["deals", "Import deals"],
+    ["deals", "Import opportunities"],
   ] as const)(
     "imports %s from a dialog with no resource to pick",
     async (resource, heading) => {
@@ -131,7 +139,7 @@ describe("DataImportButton", () => {
     const { dataProvider, screen } = await renderImport(useCompanyImport, [
       {
         name: "Acme",
-        sector: "Information Technology",
+        sector: "Industrial / Factories",
         size: 50,
         city: "New York",
         website: "https://acme.example",
@@ -147,7 +155,7 @@ describe("DataImportButton", () => {
     expect(companies[0]).toMatchObject({
       city: "New York",
       name: "Acme",
-      sector: "information-technology",
+      sector: "industrial",
       // 50 employees falls in the "50-249 employees" bucket
       size: 250,
       website: "https://acme.example",
@@ -181,7 +189,9 @@ describe("DataImportButton", () => {
     const options = screen.getByRole("listbox");
 
     await expect.element(options.getByText("Contacts")).toBeVisible();
-    await expect.element(options.getByText("Deals")).not.toBeInTheDocument();
+    await expect
+      .element(options.getByText("Opportunities"))
+      .not.toBeInTheDocument();
   });
 
   it("renders nothing for a resource the running app does not register", async () => {
@@ -198,8 +208,8 @@ describe("DataImportButton", () => {
       {
         name: "New website",
         company: "Acme",
-        category: "Website design",
-        stage: "Proposal Sent",
+        category: "Through Contractor",
+        stage: "Quotation Submitted",
         amount: "12000",
         expected_closing_date: "2026-09-30",
       },
@@ -217,29 +227,35 @@ describe("DataImportButton", () => {
     expect(deals).toHaveLength(2);
     expect(deals[0]).toMatchObject({
       amount: 12000,
-      category: "website-design",
+      category: "contractor",
       company_id: companies[0].id,
       name: "New website",
-      stage: "proposal-sent",
+      stage: "quotation-submitted",
     });
     expect(deals[0].expected_closing_date).toBe("2026-09-30T00:00:00.000Z");
     // Both rows name the same company, which is created once and shared
     expect(deals[1].company_id).toBe(companies[0].id);
     // stage is required, so an empty cell falls back to the first stage
-    expect(deals[1].stage).toBe("opportunity");
+    expect(deals[1].stage).toBe("tender-announced");
   });
 
   it("appends imported deals below the deals already in their stage", async () => {
     const { dataProvider, screen } = await renderImport(
       useDealImport,
       [
-        { name: "First", stage: "Opportunity" },
-        { name: "Second", stage: "Opportunity" },
-        { name: "Other column", stage: "Proposal Sent" },
+        { name: "First", stage: "Tender Announced" },
+        { name: "Second", stage: "Tender Announced" },
+        { name: "Other column", stage: "Quotation Submitted" },
       ],
       {
         deals: [
-          { id: 1, name: "Already there", stage: "opportunity", index: 0 },
+          {
+            id: 1,
+            name: "Already there",
+            stage: "tender-announced",
+            pipeline: "tender",
+            index: 0,
+          },
         ] as Deal[],
       },
     );
@@ -254,10 +270,10 @@ describe("DataImportButton", () => {
     expect(
       deals.map(({ name, stage, index }) => ({ name, stage, index })),
     ).toEqual([
-      { name: "Already there", stage: "opportunity", index: 0 },
-      { name: "First", stage: "opportunity", index: 1 },
-      { name: "Second", stage: "opportunity", index: 2 },
-      { name: "Other column", stage: "proposal-sent", index: 0 },
+      { name: "Already there", stage: "tender-announced", index: 0 },
+      { name: "First", stage: "tender-announced", index: 1 },
+      { name: "Second", stage: "tender-announced", index: 2 },
+      { name: "Other column", stage: "quotation-submitted", index: 0 },
     ]);
   });
 
@@ -275,14 +291,14 @@ describe("DataImportButton", () => {
 
     await screen.getByRole("button", { name: "Import data" }).click();
     await screen.getByLabelText("Resource").click();
-    await screen.getByRole("listbox").getByText("Deals").click();
+    await screen.getByRole("listbox").getByText("Opportunities").click();
 
     await screen
       .getByLabelText("CSV File")
       .upload(
         csvFile("deals.csv", [
           "name,company,stage,amount,expected_closing_date",
-          "New website,Acme,Proposal Sent,4500.50,2026-09-30",
+          "New website,Acme,Quotation Submitted,4500.50,2026-09-30",
         ]),
       );
     await screen.getByRole("button", { name: "Start import" }).click();
@@ -298,7 +314,7 @@ describe("DataImportButton", () => {
       // A fractional amount would make the bigint column reject the row
       amount: 4501,
       sales_id: DEFAULT_USER.id,
-      stage: "proposal-sent",
+      stage: "quotation-submitted",
     });
     expect(deals[0].expected_closing_date).toBe("2026-09-30T00:00:00.000Z");
   });
@@ -324,7 +340,7 @@ describe("DataImportButton", () => {
           "Acme,02134,0155123456,0123456789",
         ]),
       );
-    await screen.getByRole("button", { name: "Start import" }).click();
+    await startAndConfirmImport(screen);
 
     await expect.element(screen.getByText(/Import complete/)).toBeVisible();
 
@@ -357,7 +373,7 @@ describe("DataImportButton", () => {
           "Jane,Doe,0155123456,0033123456,0987654321",
         ]),
       );
-    await screen.getByRole("button", { name: "Start import" }).click();
+    await startAndConfirmImport(screen);
 
     await expect.element(screen.getByText(/Import complete/)).toBeVisible();
 
@@ -381,10 +397,10 @@ describe("DataImportButton", () => {
       <StoryWrapper
         dataProvider={{
           ...dataProvider,
-          // `name` is NOT NULL in the database
+          // e.g. a constraint the preview cannot know about
           create: (resource, params) =>
-            resource === "companies" && params.data.name === undefined
-              ? Promise.reject(new Error("null value in column name"))
+            resource === "companies" && params.data.name === "Initech"
+              ? Promise.reject(new Error("violates check constraint"))
               : dataProvider.create(resource, params),
         }}
       >
@@ -399,11 +415,11 @@ describe("DataImportButton", () => {
         csvFile("companies.csv", [
           "name,city",
           "Acme,New York",
-          ",Boston",
+          "Initech,Boston",
           "Globex,Paris",
         ]),
       );
-    await screen.getByRole("button", { name: "Start import" }).click();
+    await startAndConfirmImport(screen);
 
     // A rejected row used to fail the accounting of its whole batch, so users
     // re-imported a file whose records had in fact been created
@@ -415,5 +431,60 @@ describe("DataImportButton", () => {
 
     const { data: companies } = await listAll(dataProvider, "companies");
     expect(companies.map(({ name }) => name)).toEqual(["Acme", "Globex"]);
+  });
+
+  it("previews duplicates and imports only the new rows of a mapped CSV", async () => {
+    const dataProvider = createDataProvider({
+      db: createCrmDb({
+        companies: [
+          { id: 1, name: "Sample Contracting Co" },
+        ] as Db["companies"],
+      }),
+      latency: 0,
+      silent: true,
+    });
+    const screen = await render(
+      <StoryWrapper dataProvider={dataProvider}>
+        <DataImportButton resource="companies" />
+      </StoryWrapper>,
+    );
+
+    await screen.getByRole("button", { name: "Import CSV" }).click();
+    await screen
+      .getByLabelText("CSV File")
+      .upload(
+        csvFile("customers.csv", [
+          "Customer Name,Town,Phone",
+          "SAMPLE contracting co.,Cairo,0221",
+          "Nile Power,Giza,0222",
+          "nile power,Giza,0222",
+          ",Aswan,0223",
+        ]),
+      );
+    await screen.getByRole("button", { name: "Start import" }).click();
+
+    // the customer's own headers are mapped to the CRM fields
+    await expect
+      .element(screen.getByRole("combobox", { name: "name" }))
+      .toHaveTextContent("Customer Name");
+    await expect
+      .element(screen.getByRole("combobox", { name: "city" }))
+      .toHaveTextContent("Town");
+    await expect.element(screen.getByText("Already in CRM: 1")).toBeVisible();
+    await expect
+      .element(screen.getByText("Duplicate in file: 1"))
+      .toBeVisible();
+    await expect.element(screen.getByText("Missing name: 1")).toBeVisible();
+    // dry run: nothing is written before the confirmation
+    expect((await listAll(dataProvider, "companies")).data).toHaveLength(1);
+
+    await screen.getByRole("button", { name: "Import 1 row" }).click();
+    await expect.element(screen.getByText(/Import complete/)).toBeVisible();
+
+    const { data: companies } = await listAll(dataProvider, "companies");
+    expect(companies.map(({ name, city }) => ({ name, city }))).toEqual([
+      { name: "Sample Contracting Co", city: undefined },
+      { name: "Nile Power", city: "Giza" },
+    ]);
   });
 });

@@ -26,8 +26,13 @@ import { NoteCreate } from "../notes/NoteCreate";
 import { NotesIterator } from "../notes/NotesIterator";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
+import { formatCompactMoney } from "../misc/formatMoney";
 import { ContactList } from "./ContactList";
-import { findDealLabel, formatISODateString } from "./dealUtils";
+import { DealLineItemsTable } from "./DealLineItemsTable";
+import { DealRevisions } from "./DealRevisions";
+import { formatISODateString } from "./dealUtils";
+import { MovePipelineButton } from "./MovePipelineButton";
+import { getDealPipeline, getDealStageLabel } from "./pipelines";
 
 export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
   const redirect = useRedirect();
@@ -50,7 +55,8 @@ export const DealShow = ({ open, id }: { open: boolean; id?: string }) => {
 
 const DealShowContent = () => {
   const translate = useTranslate();
-  const { dealStages, dealCategories, currency } = useConfigurationContext();
+  const config = useConfigurationContext();
+  const { dealCategories, currency } = config;
   const record = useRecordContext<Deal>();
   if (!record) return null;
 
@@ -68,7 +74,22 @@ const DealShowContent = () => {
               >
                 <CompanyAvatar />
               </ReferenceField>
-              <h2 className="text-2xl font-semibold">{record.name}</h2>
+              <div>
+                <p className="text-xs font-mono text-muted-foreground">
+                  {record.cr_number}
+                </p>
+                <h2 className="text-2xl font-semibold">{record.name}</h2>
+                {record.project_id != null ? (
+                  <p className="text-sm text-muted-foreground">
+                    {translate("resources.deals.fields.project_id")}:{" "}
+                    <ReferenceField
+                      source="project_id"
+                      reference="projects"
+                      link="show"
+                    />
+                  </p>
+                ) : null}
+              </div>
             </div>
             <div className={`flex gap-2 ${record.archived_at ? "" : "pr-12"}`}>
               {record.archived_at ? (
@@ -78,6 +99,7 @@ const DealShowContent = () => {
                 </>
               ) : (
                 <>
+                  <MovePipelineButton record={record} />
                   <ArchiveButton record={record} />
                   <EditButton />
                 </>
@@ -109,13 +131,7 @@ const DealShowContent = () => {
                 {translate("resources.deals.fields.amount")}
               </span>
               <span className="text-sm">
-                {record.amount.toLocaleString("en-US", {
-                  notation: "compact",
-                  style: "currency",
-                  currency,
-                  currencyDisplay: "narrowSymbol",
-                  minimumSignificantDigits: 3,
-                })}
+                {formatCompactMoney(record.amount, currency)}
               </span>
             </div>
 
@@ -136,7 +152,12 @@ const DealShowContent = () => {
                 {translate("resources.deals.fields.stage")}
               </span>
               <span className="text-sm">
-                {findDealLabel(dealStages, record.stage)}
+                <Badge variant="outline" className="me-1">
+                  {translate(
+                    `resources.deals.pipelines.${getDealPipeline(record)}`,
+                  )}
+                </Badge>
+                {getDealStageLabel(config, record)}
               </span>
             </div>
           </div>
@@ -165,6 +186,19 @@ const DealShowContent = () => {
               <p className="text-sm leading-6">{record.description}</p>
             </div>
           )}
+
+          {record.line_items?.length ? (
+            <div className="m-4">
+              <span className="text-xs text-muted-foreground tracking-wide">
+                {translate("resources.deals.fields.line_items")}
+              </span>
+              <DealLineItemsTable lineItems={record.line_items} />
+            </div>
+          ) : null}
+
+          <div className="m-4">
+            <DealRevisions record={record} />
+          </div>
 
           <div className="m-4">
             <Separator className="mb-4" />

@@ -8,41 +8,66 @@ import lightModeLogo from "./logos/logo_atomic_crm_light.svg";
 export const defaultDarkModeLogo = darkModeLogo;
 export const defaultLightModeLogo = lightModeLogo;
 
-export const defaultCurrency = "USD";
+export const defaultCurrency = "EGP";
 
-export const defaultTitle = "Atomic CRM";
+export const defaultTitle = "AMI CRM";
 
 export const defaultCompanySectors = [
-  { value: "communication-services", label: "Communication Services" },
-  { value: "consumer-discretionary", label: "Consumer Discretionary" },
-  { value: "consumer-staples", label: "Consumer Staples" },
-  { value: "energy", label: "Energy" },
-  { value: "financials", label: "Financials" },
-  { value: "health-care", label: "Health Care" },
-  { value: "industrials", label: "Industrials" },
-  { value: "information-technology", label: "Information Technology" },
-  { value: "materials", label: "Materials" },
-  { value: "real-estate", label: "Real Estate" },
-  { value: "utilities", label: "Utilities" },
+  { value: "residential", label: "Residential" },
+  { value: "commercial", label: "Commercial / Malls" },
+  { value: "healthcare", label: "Hospitals / Healthcare" },
+  { value: "industrial", label: "Industrial / Factories" },
+  { value: "data-centers-telecom", label: "Data Centers / Telecom" },
+  { value: "oil-gas", label: "Oil & Gas" },
+  { value: "utilities", label: "Utilities / Power" },
+  { value: "government", label: "Government / Infrastructure" },
+  { value: "hospitality", label: "Hotels / Tourism" },
+  { value: "agriculture", label: "Agriculture" },
 ];
 
+/** Stages of the Tender pipeline */
 export const defaultDealStages = [
-  { value: "opportunity", label: "Opportunity" },
-  { value: "proposal-sent", label: "Proposal Sent" },
-  { value: "in-negociation", label: "In Negotiation" },
-  { value: "won", label: "Won" },
-  { value: "lost", label: "Lost" },
-  { value: "delayed", label: "Delayed" },
+  { value: "tender-announced", label: "Tender Announced" },
+  { value: "quotation-submitted", label: "Quotation Submitted" },
+  { value: "technical-evaluation", label: "Technical Evaluation" },
+  { value: "commercial-evaluation", label: "Commercial Evaluation" },
+  { value: "awarded", label: "Awarded to Contractor" },
+  { value: "tender-lost", label: "Lost" },
+  { value: "tender-on-hold", label: "On Hold" },
 ];
 
-export const defaultDealPipelineStatuses = ["won"];
+/** Stages of the In Hand pipeline (after the contractor won the tender) */
+export const defaultInHandDealStages = [
+  { value: "negotiation", label: "Negotiation" },
+  { value: "po-received", label: "PO Received" },
+  { value: "production", label: "Production" },
+  { value: "delivered", label: "Delivered" },
+  { value: "commissioned", label: "Commissioned" },
+  { value: "in-hand-lost", label: "Lost" },
+];
+
+export const defaultDealPipelineStatuses = ["commissioned", "in-hand-lost"];
+
+export const defaultEngineBrands = [
+  { value: "perkins", label: "Perkins" },
+  { value: "cummins", label: "Cummins" },
+  { value: "mtu", label: "MTU" },
+  { value: "volvo", label: "Volvo" },
+  { value: "hyundai", label: "Hyundai" },
+  { value: "deutz", label: "Deutz" },
+  { value: "mitsubishi", label: "Mitsubishi" },
+];
+
+export const defaultAlternatorBrands = [
+  { value: "stamford", label: "Stamford" },
+  { value: "leroy-somer", label: "Leroy Somer" },
+  { value: "mecc-alte", label: "Mecc Alte" },
+];
 
 export const defaultDealCategories = [
-  { value: "other", label: "Other" },
-  { value: "copywriting", label: "Copywriting" },
-  { value: "print-project", label: "Print project" },
-  { value: "ui-design", label: "UI Design" },
-  { value: "website-design", label: "Website design" },
+  { value: "contractor", label: "Through Contractor" },
+  { value: "direct", label: "Direct to End Client" },
+  { value: "distributor", label: "Distributor / Reseller" },
 ];
 
 export const defaultNoteStatuses = [
@@ -60,7 +85,8 @@ export const defaultTaskTypes = [
   { value: "meeting", label: "Meeting" },
   { value: "follow-up", label: "Follow-up" },
   { value: "thank-you", label: "Thank you" },
-  { value: "ship", label: "Ship" },
+  { value: "site-visit", label: "Site visit" },
+  { value: "technical-submittal", label: "Technical submittal" },
   { value: "call", label: "Call" },
 ];
 
@@ -70,6 +96,9 @@ export const defaultConfiguration: ConfigurationContextValue = {
   dealCategories: defaultDealCategories,
   dealPipelineStatuses: defaultDealPipelineStatuses,
   dealStages: defaultDealStages,
+  inHandDealStages: defaultInHandDealStages,
+  engineBrands: defaultEngineBrands,
+  alternatorBrands: defaultAlternatorBrands,
   noteStatuses: defaultNoteStatuses,
   taskTypes: defaultTaskTypes,
   title: defaultTitle,

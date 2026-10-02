@@ -114,9 +114,71 @@ export type ContactNote = {
   attachments?: AttachmentNote[];
 } & Pick<RaRecord, "id">;
 
+export const DEAL_PIPELINES = ["tender", "in_hand"] as const;
+export type DealPipeline = (typeof DEAL_PIPELINES)[number];
+
+export const LINE_ITEM_TYPES = [
+  "genset",
+  "lv_panel",
+  "ats_panel",
+  "sync_panel",
+  "mdb",
+  "canopy",
+  "fuel_tank",
+] as const;
+export type LineItemType = (typeof LINE_ITEM_TYPES)[number];
+
+export const CANOPY_TYPES = ["open", "acoustic", "weatherproof"] as const;
+export type CanopyType = (typeof CANOPY_TYPES)[number];
+
+export const RATING_TYPES = ["prime", "standby"] as const;
+export type RatingType = (typeof RATING_TYPES)[number];
+
+/** One quoted item of an opportunity (a genset, a panel, a canopy...). */
+export type DealLineItem = {
+  item_type: LineItemType;
+  description?: string | null;
+  quantity: number;
+  unit_price?: number | null;
+  /** Genset only */
+  kva?: number | null;
+  rating_type?: RatingType | null;
+  engine_brand?: string | null;
+  alternator_brand?: string | null;
+  canopy_type?: CanopyType | null;
+  voltage?: string | null;
+  frequency?: string | null;
+};
+
+/** One revision (Rev 0, Rev 1, ...) of the opportunity's CR quotation. */
+export type DealRevision = {
+  revision: number;
+  date: string;
+  value: number;
+  notes?: string | null;
+};
+
+export type Project = {
+  name: string;
+  end_client?: string | null;
+  consultant?: string | null;
+  location?: string | null;
+  sector?: string | null;
+  estimated_value?: number | null;
+  description?: string | null;
+  sales_id?: Identifier | null;
+  created_at: string;
+} & Pick<RaRecord, "id">;
+
 export type Deal = {
   name: string;
   company_id: Identifier;
+  project_id?: Identifier | null;
+  pipeline: DealPipeline;
+  /** CR (quotation reference) number, assigned on creation and never changed */
+  cr_number: string;
+  line_items?: DealLineItem[] | null;
+  revisions?: DealRevision[] | null;
   contact_ids: Identifier[];
   category: string;
   stage: string;

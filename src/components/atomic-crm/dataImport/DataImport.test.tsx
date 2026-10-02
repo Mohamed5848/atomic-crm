@@ -62,7 +62,12 @@ const createContact = async (
 
 const ImportHarness = ({ children }: { children?: ReactNode }) => (
   <StoryWrapper
-    dataProvider={{ create: createContact as DataProvider["create"] }}
+    dataProvider={{
+      create: createContact as DataProvider["create"],
+      // no existing contact: the preview flags no duplicate
+      getList: (() =>
+        Promise.resolve({ data: [], total: 0 })) as DataProvider["getList"],
+    }}
   >
     {children ?? (
       <>
@@ -86,11 +91,14 @@ const selectCsvFile = () => {
     .upload(new File([csv], "contacts.csv", { type: "text/csv" }));
 };
 
-const submitImportDialog = (screen: Screen) =>
-  screen
+const submitImportDialog = async (screen: Screen) => {
+  await screen
     .getByRole("toolbar")
     .getByRole("button", { name: /start import/i })
     .click();
+  // confirm the dry run preview
+  await screen.getByRole("button", { name: /^Import \d+ rows?$/ }).click();
+};
 
 const startImport = async (screen: Screen) => {
   await openImportDialog(screen);

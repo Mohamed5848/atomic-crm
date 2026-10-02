@@ -27,6 +27,7 @@ import { DealEmpty } from "./DealEmpty";
 import { DealListContent } from "./DealListContent";
 import { DealShow } from "./DealShow";
 import { OnlyMineInput } from "./OnlyMineInput";
+import { PipelineToggle } from "./PipelineToggle";
 
 const DealList = () => {
   const { identity } = useGetIdentity();
@@ -72,6 +73,7 @@ const DealList = () => {
     <List
       perPage={100}
       filter={{ "archived_at@is": null }}
+      filterDefaultValues={{ pipeline: "tender" }}
       title={false}
       sort={{ field: "index", order: "DESC" }}
       filters={dealFilters}
@@ -90,10 +92,13 @@ const DealLayout = () => {
   const matchEdit = matchPath("/deals/:id", location.pathname);
 
   const { data, isPending, filterValues } = useListContext();
-  const hasFilters = filterValues && Object.keys(filterValues).length > 0;
+  // the pipeline is always set (Tender by default), it is not a user filter
+  const hasFilters =
+    filterValues &&
+    Object.keys(filterValues).some((filter) => filter !== "pipeline");
 
   if (isPending) return null;
-  if (!data?.length && !hasFilters)
+  if (!data?.length && !hasFilters && filterValues?.pipeline !== "in_hand")
     return (
       <>
         <DealEmpty>
@@ -105,6 +110,7 @@ const DealLayout = () => {
 
   return (
     <div className="w-full">
+      <PipelineToggle />
       <DealListContent />
       <DealArchivedList />
       <DealCreate open={!!matchCreate} />

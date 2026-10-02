@@ -207,7 +207,7 @@ const getDataProviderWithCustomMethods = () => {
     async unarchiveDeal(deal: Deal) {
       // get all deals where stage is the same as the deal to unarchive
       const { data: deals } = await baseDataProvider.getList<Deal>("deals", {
-        filter: { stage: deal.stage },
+        filter: { stage: deal.stage, pipeline: deal.pipeline },
         pagination: { page: 1, perPage: 1000 },
         sort: { field: "index", order: "ASC" },
       });
@@ -376,7 +376,23 @@ const lifeCycleCallbacks: ResourceCallbacks[] = [
   {
     resource: "deals",
     beforeGetList: async (params) => {
-      return applyFullTextSearch(["name", "category", "description"])(params);
+      return applyFullTextSearch([
+        "name",
+        "cr_number",
+        "category",
+        "description",
+      ])(params);
+    },
+  },
+  {
+    resource: "projects",
+    beforeGetList: async (params) => {
+      return applyFullTextSearch([
+        "name",
+        "end_client",
+        "consultant",
+        "location",
+      ])(params);
     },
   },
 ];

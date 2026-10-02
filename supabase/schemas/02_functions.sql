@@ -439,6 +439,17 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION "public"."keep_deal_cr_number"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    SET "search_path" TO ''
+    AS $$
+BEGIN
+  -- The CR number identifies the quotation for the deal's whole life
+  NEW.cr_number := OLD.cr_number;
+  RETURN NEW;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION "public"."lowercase_email_jsonb"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     SET "search_path" TO 'public'

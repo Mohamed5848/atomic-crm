@@ -20,6 +20,15 @@ create or replace trigger set_deal_sales_id_trigger
     before insert on public.deals
     for each row execute function public.set_sales_id_default();
 
+create or replace trigger set_project_sales_id_trigger
+    before insert on public.projects
+    for each row execute function public.set_sales_id_default();
+
+-- The CR number never changes once assigned
+create or replace trigger keep_deal_cr_number_trigger
+    before update of cr_number on public.deals
+    for each row execute function public.keep_deal_cr_number();
+
 create or replace trigger set_deal_notes_sales_id_trigger
     before insert on public.deal_notes
     for each row execute function public.set_sales_id_default();

@@ -21,6 +21,7 @@ import type {
   Task,
 } from "../../types";
 import type { ConfigurationContextValue } from "../../root/ConfigurationContext";
+import { nextCrNumber } from "../../deals/opportunity";
 import { getActivityLog } from "../commons/activity";
 import { getCompanyAvatar } from "../commons/getCompanyAvatar";
 import { getContactAvatar } from "../commons/getContactAvatar";
@@ -199,7 +200,7 @@ export const createDataProvider = ({
     unarchiveDeal: async (deal: Deal) => {
       // get all deals where stage is the same as the deal to unarchive
       const { data: deals } = await baseDataProvider.getList<Deal>("deals", {
-        filter: { stage: deal.stage },
+        filter: { stage: deal.stage, pipeline: deal.pipeline },
         pagination: { page: 1, perPage: 1000 },
         sort: { field: "index", order: "ASC" },
       });
@@ -576,11 +577,23 @@ export const createDataProvider = ({
       } satisfies ResourceCallbacks<Company>,
       {
         resource: "deals",
-        beforeCreate: async (params) => {
+        beforeCreate: async (params, dataProvider) => {
+          const { data: existing } = await dataProvider.getList<Deal>("deals", {
+            pagination: { page: 1, perPage: 10000 },
+            sort: { field: "id", order: "ASC" },
+            filter: {},
+          });
           return {
             ...params,
             data: {
+              pipeline: "tender",
+              line_items: [],
+              revisions: [],
               ...params.data,
+              // like the database default, unless the caller (e.g. an import) brings one
+              cr_number:
+                params.data.cr_number ||
+                nextCrNumber(existing.map((deal) => deal.cr_number)),
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             },
@@ -593,11 +606,16 @@ export const createDataProvider = ({
 
           return result;
         },
-        beforeUpdate: async (params) => {
+        beforeUpdate: async (params, dataProvider) => {
+          // like the database trigger: the CR number never changes once assigned
+          const { data: current } = await dataProvider.getOne<Deal>("deals", {
+            id: params.id,
+          });
           return {
             ...params,
             data: {
               ...params.data,
+              cr_number: current.cr_number,
               updated_at: new Date().toISOString(),
             },
           };

@@ -55,6 +55,9 @@ export const DealCardContent = ({
           }`}
         >
           <CardContent className="px-3 flex flex-col">
+            <p className="text-xs font-mono text-muted-foreground mb-1">
+              {deal.cr_number}
+            </p>
             <div className="flex-1 flex">
               <p className="flex-1 text-sm font-medium mb-2">
                 <ReferenceField
@@ -92,6 +95,15 @@ export const DealCardContent = ({
                 optionValue="value"
               />
             </p>
+            {deal.project_id != null ? (
+              <p className="text-xs text-muted-foreground truncate mt-1">
+                <ReferenceField
+                  source="project_id"
+                  reference="projects"
+                  link={false}
+                />
+              </p>
+            ) : null}
           </CardContent>
         </Card>
       </RecordContextProvider>

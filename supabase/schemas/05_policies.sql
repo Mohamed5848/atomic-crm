@@ -9,6 +9,7 @@ alter table public.contacts enable row level security;
 alter table public.contact_notes enable row level security;
 alter table public.deals enable row level security;
 alter table public.deal_notes enable row level security;
+alter table public.projects enable row level security;
 alter table public.sales enable row level security;
 alter table public.tags enable row level security;
 alter table public.tasks enable row level security;
@@ -38,6 +39,12 @@ create policy "Enable read access for authenticated users" on public.deals for s
 create policy "Enable insert for authenticated users only" on public.deals for insert to authenticated with check (true);
 create policy "Enable update for authenticated users only" on public.deals for update to authenticated using (true) with check (true);
 create policy "Deals Delete Policy" on public.deals for delete to authenticated using (true);
+
+-- Projects
+create policy "Enable read access for authenticated users" on public.projects for select to authenticated using (true);
+create policy "Enable insert for authenticated users only" on public.projects for insert to authenticated with check (true);
+create policy "Enable update for authenticated users only" on public.projects for update to authenticated using (true) with check (true);
+create policy "Projects Delete Policy" on public.projects for delete to authenticated using (true);
 
 -- Deal Notes
 create policy "Enable read access for authenticated users" on public.deal_notes for select to authenticated using (true);

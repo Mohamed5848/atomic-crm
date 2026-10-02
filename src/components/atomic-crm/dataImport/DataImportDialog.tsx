@@ -26,6 +26,7 @@ import { FormToolbar } from "@/components/admin/simple-form";
 import { FileInput } from "@/components/admin/file-input";
 import { FileField } from "@/components/admin/file-field";
 
+import { ImportPreview } from "./ImportPreview";
 import type { ImportableResource } from "./types";
 import type { ImportableResourceName } from "./useImportableResources";
 
@@ -50,9 +51,11 @@ export function DataImportDialog({
   const translate = useTranslate();
   const getResourceLabel = useGetResourceLabel();
   const [file, setFile] = useState<File | null>(null);
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
 
   useEffect(() => {
     setFile(null);
+    setPreviewFile(null);
   }, [resource.name, open]);
 
   // Importing a single resource names the dialog after it, falling back to the
@@ -75,71 +78,100 @@ export function DataImportDialog({
 
   const handleStart = () => {
     if (!file) return;
+    // companies and contacts go through a mapping / duplicates dry run first
+    if (resource.name === "companies" || resource.name === "contacts") {
+      setPreviewFile(file);
+      return;
+    }
     onStart(file);
   };
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-[calc(100%-2rem)] gap-6 p-6 sm:max-w-2xl sm:p-8">
-        {/* Remount the form on resource change so no file survives the switch */}
-        <Form key={resource.name} className="flex flex-col gap-6">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-          </DialogHeader>
+      <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto gap-6 p-6 sm:max-w-3xl sm:p-8">
+        {previewFile &&
+        (resource.name === "companies" || resource.name === "contacts") ? (
+          <>
+            <DialogHeader>
+              <DialogTitle>{title}</DialogTitle>
+            </DialogHeader>
+            <ImportPreview
+              file={previewFile}
+              resource={resource.name}
+              sampleCsv={resource.sampleCsv}
+              onBack={() => setPreviewFile(null)}
+              onImport={onStart}
+            />
+          </>
+        ) : (
+          <>
+            {/* Remount the form on resource change so no file survives the switch */}
+            <Form key={resource.name} className="flex flex-col gap-6">
+              <DialogHeader>
+                <DialogTitle>{title}</DialogTitle>
+              </DialogHeader>
 
-          <div className="flex flex-col space-y-6">
-            {resources.length > 1 && (
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="data-import-resource">
-                  {translate("crm.data_import.resource")}
-                </Label>
-                <Select
-                  value={resource.name}
-                  onValueChange={handleResourceChange}
+              <div className="flex flex-col space-y-6">
+                {resources.length > 1 && (
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="data-import-resource">
+                      {translate("crm.data_import.resource")}
+                    </Label>
+                    <Select
+                      value={resource.name}
+                      onValueChange={handleResourceChange}
+                    >
+                      <SelectTrigger
+                        id="data-import-resource"
+                        className="w-full"
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {resources.map(({ name }) => (
+                          <SelectItem key={name} value={name}>
+                            {getResourceLabel(name, 2)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <Alert>
+                  <AlertDescription className="flex flex-col gap-4">
+                    {translate("crm.data_import.sample_hint")}
+                    <Button asChild variant="outline" size="sm">
+                      <Link
+                        to={sampleUrl}
+                        download={sampleFileName(resource.name)}
+                      >
+                        {translate("crm.data_import.sample_download")}
+                      </Link>
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+
+                <FileInput
+                  source="csv"
+                  label="crm.data_import.csv_file"
+                  accept={{ "text/csv": [".csv"] }}
+                  onChange={setFile}
                 >
-                  <SelectTrigger id="data-import-resource" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {resources.map(({ name }) => (
-                      <SelectItem key={name} value={name}>
-                        {getResourceLabel(name, 2)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <FileField source="src" title="title" target="_blank" />
+                </FileInput>
               </div>
-            )}
+            </Form>
 
-            <Alert>
-              <AlertDescription className="flex flex-col gap-4">
-                {translate("crm.data_import.sample_hint")}
-                <Button asChild variant="outline" size="sm">
-                  <Link to={sampleUrl} download={sampleFileName(resource.name)}>
-                    {translate("crm.data_import.sample_download")}
-                  </Link>
+            <div className="flex justify-start">
+              <FormToolbar>
+                <Button onClick={handleStart} disabled={!file}>
+                  {translate("crm.data_import.start")}
                 </Button>
-              </AlertDescription>
-            </Alert>
-
-            <FileInput
-              source="csv"
-              label="crm.data_import.csv_file"
-              accept={{ "text/csv": [".csv"] }}
-              onChange={setFile}
-            >
-              <FileField source="src" title="title" target="_blank" />
-            </FileInput>
-          </div>
-        </Form>
-
-        <div className="flex justify-start">
-          <FormToolbar>
-            <Button onClick={handleStart} disabled={!file}>
-              {translate("crm.data_import.start")}
-            </Button>
-          </FormToolbar>
-        </div>
+              </FormToolbar>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

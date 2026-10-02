@@ -20,6 +20,7 @@ import contacts from "../contacts";
 import { Dashboard } from "../dashboard/Dashboard";
 import { MobileDashboard } from "../dashboard/MobileDashboard";
 import deals from "../deals";
+import projects from "../projects";
 import { Layout } from "../layout/Layout";
 import { MobileLayout } from "../layout/MobileLayout";
 import { SignupPage } from "../login/SignupPage";
@@ -46,6 +47,9 @@ import {
   defaultDealCategories,
   defaultDealPipelineStatuses,
   defaultDealStages,
+  defaultEngineBrands,
+  defaultAlternatorBrands,
+  defaultInHandDealStages,
   defaultLightModeLogo,
   defaultNoteStatuses,
   defaultTaskTypes,
@@ -84,7 +88,10 @@ export type CRMProps = {
  * @param {RaThemeOptions} darkTheme - The theme to use when the application is in dark mode.
  * @param {LabeledValue[]} dealCategories - The categories of deals used in the application.
  * @param {string[]} dealPipelineStatuses - The statuses of deals in the pipeline used in the application.
- * @param {DealStage[]} dealStages - The stages of deals used in the application.
+ * @param {DealStage[]} dealStages - The stages of the Tender pipeline.
+ * @param {DealStage[]} inHandDealStages - The stages of the In Hand pipeline.
+ * @param {LabeledValue[]} engineBrands - Engine brands offered on genset line items.
+ * @param {LabeledValue[]} alternatorBrands - Alternator brands offered on genset line items.
  * @param {RaThemeOptions} lightTheme - The theme to use when the application is in light mode.
  * @param {string} darkModeLogo - Logo shown in dark mode and on the auth pages. Must be an imported asset, an absolute URL, or a data URI — never a route-relative path like "./logos/x.svg", which breaks on nested routes such as /oauth/consent (issue #291).
  * @param {string} lightModeLogo - Logo shown in light mode. Same rule as darkModeLogo: imported asset, absolute URL, or data URI only.
@@ -120,6 +127,9 @@ export const CRM = ({
   dealCategories = defaultDealCategories,
   dealPipelineStatuses = defaultDealPipelineStatuses,
   dealStages = defaultDealStages,
+  inHandDealStages = defaultInHandDealStages,
+  engineBrands = defaultEngineBrands,
+  alternatorBrands = defaultAlternatorBrands,
   darkModeLogo = defaultDarkModeLogo,
   lightModeLogo = defaultLightModeLogo,
   noteStatuses = defaultNoteStatuses,
@@ -156,6 +166,9 @@ export const CRM = ({
         dealCategories,
         dealPipelineStatuses,
         dealStages,
+        inHandDealStages,
+        engineBrands,
+        alternatorBrands,
         noteStatuses,
         taskTypes,
         title,
@@ -263,6 +276,7 @@ const DesktopAdmin = (
         <Route path={ChangelogPage.path} element={<ChangelogPage />} />
       </CustomRoutes>
       <Resource name="deals" {...deals} />
+      <Resource name="projects" {...projects} />
       <Resource name="contacts" {...contacts} />
       <Resource name="companies" {...companies} />
       <Resource name="contact_notes" />

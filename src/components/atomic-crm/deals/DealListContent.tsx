@@ -6,12 +6,19 @@ import { useEffect, useState } from "react";
 import { useConfigurationContext } from "../root/ConfigurationContext";
 import type { Deal } from "../types";
 import { DealColumn } from "./DealColumn";
+import { getPipelineStages } from "./pipelines";
 import type { DealsByStage } from "./stages";
 import { getDealsByStage } from "./stages";
 
 export const DealListContent = () => {
-  const { dealStages } = useConfigurationContext();
-  const { data: unorderedDeals, isPending, refetch } = useListContext<Deal>();
+  const config = useConfigurationContext();
+  const {
+    data: unorderedDeals,
+    isPending,
+    refetch,
+    filterValues,
+  } = useListContext<Deal>();
+  const dealStages = getPipelineStages(config, filterValues.pipeline);
   const dataProvider = useDataProvider();
 
   const [dealsByStage, setDealsByStage] = useState<DealsByStage>(
@@ -26,7 +33,7 @@ export const DealListContent = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unorderedDeals]);
+  }, [unorderedDeals, dealStages]);
 
   if (isPending) return null;
 
@@ -72,11 +79,12 @@ export const DealListContent = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-4">
+      <div className="flex gap-4 overflow-x-auto">
         {dealStages.map((stage) => (
           <DealColumn
             stage={stage.value}
-            deals={dealsByStage[stage.value]}
+            stages={dealStages}
+            deals={dealsByStage[stage.value] ?? []}
             key={stage.value}
           />
         ))}
@@ -135,7 +143,7 @@ const updateDealStage = async (
     const { data: columnDeals } = await dataProvider.getList("deals", {
       sort: { field: "index", order: "ASC" },
       pagination: { page: 1, perPage: 100 },
-      filter: { stage: source.stage },
+      filter: { stage: source.stage, pipeline: source.pipeline },
     });
     const destinationIndex = destination.index ?? columnDeals.length + 1;
 
@@ -200,12 +208,12 @@ const updateDealStage = async (
         dataProvider.getList("deals", {
           sort: { field: "index", order: "ASC" },
           pagination: { page: 1, perPage: 100 },
-          filter: { stage: source.stage },
+          filter: { stage: source.stage, pipeline: source.pipeline },
         }),
         dataProvider.getList("deals", {
           sort: { field: "index", order: "ASC" },
           pagination: { page: 1, perPage: 100 },
-          filter: { stage: destination.stage },
+          filter: { stage: destination.stage, pipeline: source.pipeline },
         }),
       ]);
     const destinationIndex = destination.index ?? destinationDeals.length + 1;

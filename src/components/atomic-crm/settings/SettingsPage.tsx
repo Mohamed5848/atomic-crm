@@ -41,6 +41,11 @@ const SECTIONS = [
     fallback: "Companies",
   },
   { id: "deals", label: "resources.deals.name", fallback: "Deals" },
+  {
+    id: "equipment",
+    label: "crm.settings.sections.equipment",
+    fallback: "Equipment",
+  },
   { id: "notes", label: "resources.notes.name", fallback: "Notes" },
   { id: "tasks", label: "resources.tasks.name", fallback: "Tasks" },
   { id: "tags", label: "resources.tags.name", fallback: "Tags" },
@@ -128,6 +133,9 @@ const transformFormValues = (data: Record<string, any>) => ({
     dealCategories: ensureValues(data.dealCategories),
     taskTypes: ensureValues(data.taskTypes),
     dealStages: ensureValues(data.dealStages),
+    inHandDealStages: ensureValues(data.inHandDealStages),
+    engineBrands: ensureValues(data.engineBrands),
+    alternatorBrands: ensureValues(data.alternatorBrands),
     dealPipelineStatuses: data.dealPipelineStatuses,
     noteStatuses: ensureValues(data.noteStatuses),
   } as ConfigurationContextValue,
@@ -176,6 +184,9 @@ const SettingsForm = () => {
       dealCategories: config.dealCategories,
       taskTypes: config.taskTypes,
       dealStages: config.dealStages,
+      inHandDealStages: config.inHandDealStages,
+      engineBrands: config.engineBrands,
+      alternatorBrands: config.alternatorBrands,
       dealPipelineStatuses: config.dealPipelineStatuses,
       noteStatuses: config.noteStatuses,
     }),
@@ -200,6 +211,7 @@ const SettingsFormFields = () => {
   } = useFormContext();
 
   const dealStages = watch("dealStages");
+  const inHandDealStages = watch("inHandDealStages");
   const dealPipelineStatuses: string[] = watch("dealPipelineStatuses") ?? [];
   const stageDisplayName = translate("crm.settings.validation.entities.stages");
   const categoryDisplayName = translate(
@@ -210,22 +222,40 @@ const SettingsFormFields = () => {
     pagination: { page: 1, perPage: 1000 },
   });
 
-  const validateDealStages = useCallback(
-    (stages: { value: string; label: string }[] | undefined) =>
-      validateItemsInUse(stages, deals, "stage", stageDisplayName, {
-        duplicate: (displayName, duplicates) =>
-          translate("crm.settings.validation.duplicate", {
-            display_name: displayName,
-            items: duplicates.join(", "),
-          }),
-        inUse: (displayName, inUse) =>
-          translate("crm.settings.validation.in_use", {
-            display_name: displayName,
-            items: inUse.join(", "),
-          }),
-        validating: translate("crm.settings.validation.validating"),
-      }),
-    [deals, stageDisplayName, translate],
+  const tenderDeals = useMemo(
+    () => deals?.filter((deal) => deal.pipeline !== "in_hand"),
+    [deals],
+  );
+  const inHandDeals = useMemo(
+    () => deals?.filter((deal) => deal.pipeline === "in_hand"),
+    [deals],
+  );
+
+  const makeStagesValidator = useCallback(
+    (pipelineDeals: RaRecord[] | undefined) =>
+      (stages: { value: string; label: string }[] | undefined) =>
+        validateItemsInUse(stages, pipelineDeals, "stage", stageDisplayName, {
+          duplicate: (displayName, duplicates) =>
+            translate("crm.settings.validation.duplicate", {
+              display_name: displayName,
+              items: duplicates.join(", "),
+            }),
+          inUse: (displayName, inUse) =>
+            translate("crm.settings.validation.in_use", {
+              display_name: displayName,
+              items: inUse.join(", "),
+            }),
+          validating: translate("crm.settings.validation.validating"),
+        }),
+    [stageDisplayName, translate],
+  );
+  const validateDealStages = useMemo(
+    () => makeStagesValidator(tenderDeals),
+    [makeStagesValidator, tenderDeals],
+  );
+  const validateInHandDealStages = useMemo(
+    () => makeStagesValidator(inHandDeals),
+    [makeStagesValidator, inHandDeals],
   );
 
   const validateDealCategories = useCallback(
@@ -354,7 +384,7 @@ const SettingsFormFields = () => {
             <Separator />
 
             <h3 className="text-lg font-medium text-muted-foreground">
-              {translate("crm.settings.deals.stages")}
+              {translate("crm.settings.deals.tender_stages")}
             </h3>
             <ArrayInput
               source="dealStages"
@@ -370,13 +400,29 @@ const SettingsFormFields = () => {
             <Separator />
 
             <h3 className="text-lg font-medium text-muted-foreground">
+              {translate("crm.settings.deals.in_hand_stages")}
+            </h3>
+            <ArrayInput
+              source="inHandDealStages"
+              label={false}
+              helperText={false}
+              validate={validateInHandDealStages}
+            >
+              <SimpleFormIterator disableClear>
+                <TextInput source="label" label={false} />
+              </SimpleFormIterator>
+            </ArrayInput>
+
+            <Separator />
+
+            <h3 className="text-lg font-medium text-muted-foreground">
               {translate("crm.settings.deals.pipeline_statuses")}
             </h3>
             <p className="text-sm text-muted-foreground">
               {translate("crm.settings.deals.pipeline_help")}
             </p>
             <div className="flex flex-wrap gap-2">
-              {dealStages?.map(
+              {[...(dealStages ?? []), ...(inHandDealStages ?? [])].map(
                 (stage: { value: string; label: string }, idx: number) => {
                   const isSelected = dealPipelineStatuses.includes(stage.value);
                   return (
@@ -418,6 +464,38 @@ const SettingsFormFields = () => {
               label={false}
               helperText={false}
               validate={validateDealCategories}
+            >
+              <SimpleFormIterator disableReordering disableClear>
+                <TextInput source="label" label={false} />
+              </SimpleFormIterator>
+            </ArrayInput>
+          </CardContent>
+        </Card>
+
+        {/* Equipment */}
+        <Card id="equipment">
+          <CardContent className="space-y-4">
+            <h2 className="text-xl font-semibold text-muted-foreground">
+              {translate("crm.settings.sections.equipment")}
+            </h2>
+            <h3 className="text-lg font-medium text-muted-foreground">
+              {translate("crm.settings.equipment.engine_brands")}
+            </h3>
+            <ArrayInput source="engineBrands" label={false} helperText={false}>
+              <SimpleFormIterator disableReordering disableClear>
+                <TextInput source="label" label={false} />
+              </SimpleFormIterator>
+            </ArrayInput>
+
+            <Separator />
+
+            <h3 className="text-lg font-medium text-muted-foreground">
+              {translate("crm.settings.equipment.alternator_brands")}
+            </h3>
+            <ArrayInput
+              source="alternatorBrands"
+              label={false}
+              helperText={false}
             >
               <SimpleFormIterator disableReordering disableClear>
                 <TextInput source="label" label={false} />

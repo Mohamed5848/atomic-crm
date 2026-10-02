@@ -11,7 +11,12 @@ export interface ConfigurationContextValue {
   currency: string;
   dealCategories: LabeledValue[];
   dealPipelineStatuses: string[];
+  /** Stages of the Tender pipeline */
   dealStages: DealStage[];
+  /** Stages of the In Hand pipeline */
+  inHandDealStages: DealStage[];
+  engineBrands: LabeledValue[];
+  alternatorBrands: LabeledValue[];
   noteStatuses: NoteStatus[];
   taskTypes: LabeledValue[];
   title: string;
